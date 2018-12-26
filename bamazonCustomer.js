@@ -62,13 +62,17 @@ function buyItem() {
         var newStockNumber;
         var itemId;
         var productName;
+        var price;
+        var totalPrice;
         var query = "SELECT item_id, product_name, price, stock_quantity FROM product WHERE ?"
         connection.query(query, { item_id: answer.id }, function(error, response) {
-            
+
             for (var i = 0; i < response.length; i++) {
                 stockNumber = response[i].stock_quantity;
                 itemId = response[i].item_id;
                 productName = response[i].product_name;
+                price = response[i].price;
+                totalPrice = price * answer.count;
                 // console.log("OG stock number " + stockNumber);
                 // console.log("Item number " + itemId);
                 if (stockNumber >= answer.count) {
@@ -86,11 +90,11 @@ function buyItem() {
                             }
                         ]
                     );
-                    console.log("You've successfully purchased " + answer.count + " " + productName + " !!");
+                    console.log("************************************\n" + "You've successfully purchased " + answer.count + " " + productName + " for $" + totalPrice + "\n" + "************************************\n");
                     displayItems();
 
             } else if (stockNumber < answer.count) {
-                console.log("Insufficient quantity!");
+                console.log("************************************\n" + "Insufficient quantity!" + "************************************\n");
                 displayItems();
             };
 
