@@ -57,9 +57,54 @@ function buyItem() {
                 return false;
                 }
         }
-    ])
-    .then(answer => {
-        if (answer.count >= )
-        console.log("You've successfully purchased!")    
+    ]).then(answer => {
+        var stockNumber;
+        var newStockNumber;
+        var itemId;
+        var productName;
+        var query = "SELECT item_id, product_name, price, stock_quantity FROM product WHERE ?"
+        connection.query(query, { item_id: answer.id }, function(error, response) {
+            
+            for (var i = 0; i < response.length; i++) {
+                stockNumber = response[i].stock_quantity;
+                itemId = response[i].item_id;
+                productName = response[i].product_name;
+                // console.log("OG stock number " + stockNumber);
+                // console.log("Item number " + itemId);
+                if (stockNumber >= answer.count) {
+                    newStockNumber = stockNumber - answer.count;
+                    // console.log("new number " + newStockNumber);
+                    var queryBuy = "UPDATE product SET ? WHERE ?";
+                    connection.query(
+                        queryBuy,
+                        [
+                            { 
+                                stock_quantity: newStockNumber
+                            },
+                            {
+                                item_id: itemId
+                            }
+                        ]
+                    );
+                    console.log("You've successfully purchased " + answer.count + " " + productName + " !!");
+                    displayItems();
+
+            } else if (stockNumber < answer.count) {
+                console.log("Insufficient quantity!");
+                displayItems();
+            };
+
+            } 
+
+        }
+        )
     });
+
 };
+
+
+
+
+
+      
+
